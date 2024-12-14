@@ -34,7 +34,7 @@ async def predict(request: ImageRequest):
     # Predict using the model
     preds = model.predict(img_array)
 
-    return {"prediction": preds.to_list()}
+    return {"prediction": preds.tolist()}
 
 if __name__ == "__main__":
     import uvicorn
