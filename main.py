@@ -26,15 +26,23 @@ async def predict(request: ImageRequest):
     img = Image.open(img_data)
     img = img.resize((224, 224))  # Resize image to 224x224 for VGG19
 
+    # Convert to RGB if the image is not in RGB mode
+    if img.mode != 'RGB':
+        img = img.convert('RGB')
+
     # Convert image to numpy array and preprocess for VGG19
     img_array = np.array(img)
+
+    if img_array.shape != (224, 224, 3):
+        raise ValueError(f"Invalid image shape: {img_array.shape}. Expected shape (224, 224, 3).")
+    
     img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
     img_array = preprocess_input(img_array)
 
     # Predict using the model
     preds = model.predict(img_array)
 
-    return {"prediction": preds.tolist()}
+    return {"prediction": preds.tolist()[0]}
 
 if __name__ == "__main__":
     import uvicorn
